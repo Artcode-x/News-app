@@ -14,3 +14,12 @@ export interface DateSectionType {
 export interface NewsItemProps {
   item: NewsItemType;
 }
+
+export interface Article {
+  id: string;
+  source: string;
+  title: string;
+  date: string;
+  thumb?: string;
+  url: string;
+}
