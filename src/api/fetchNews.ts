@@ -17,7 +17,6 @@ export async function fetchNews(): Promise<Record<string, NewsItemType[]>> {
     headers: { "x-requested-with": "XMLHttpRequest" },
   });
   const data = await res.json();
-  console.log(data);
 
   const articlesData: NewsItemType[] = data.response.docs.map((doc: any) => {
     const thumb =

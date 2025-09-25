@@ -1,12 +1,8 @@
-import React from 'react';
-import BesiderMobile from './BesiderMobile/BesiderMobile';
+import React from "react";
+import BesiderMobile from "./BesiderMobile/BesiderMobile";
 
 function App() {
-  return (
-    <div>
-        <BesiderMobile/>
-    </div>
-  );
+  return <BesiderMobile />;
 }
 
 export default App;

@@ -2,14 +2,12 @@ import { NewsItemProps } from "../../interface/interface";
 import "./Newsitem.css";
 
 function NewsItem({ item }: NewsItemProps) {
-  // console.log({ item });
   const isValidUrl = item.url && item.url.startsWith("http");
   const link = isValidUrl ? item.url! : "https://www.nytimes.com/";
 
   const handleClick = () => {
     if (item.url) {
       window.open(item.url, "_blank");
-      // или window.location.href = item.url; // как вар в тек вкладке
     }
   };
 

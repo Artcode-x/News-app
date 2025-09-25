@@ -25,7 +25,6 @@ function BesiderMobile() {
     try {
       setLoading(true);
       const grouped = await fetchNews();
-      console.log(grouped);
       setArticles(grouped);
     } catch (err) {
       console.error("Ошибка загрузки новостей", err);
