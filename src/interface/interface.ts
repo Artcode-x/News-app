@@ -4,6 +4,7 @@ export interface NewsItemType {
   title: string;
   date: string;
   thumb: string;
+  url?: string;
 }
 
 export interface DateSectionType {

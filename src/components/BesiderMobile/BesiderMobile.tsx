@@ -38,10 +38,10 @@ function BesiderMobile() {
     loadNews();
   }, []);
 
-  useEffect(() => {
-    const interval = setInterval(loadNews, 30000);
-    return () => clearInterval(interval);
-  }, []);
+  //   useEffect(() => {
+  //     const interval = setInterval(loadNews, 30000);
+  //     return () => clearInterval(interval);
+  //   }, []);
 
   return (
     <div className="page">

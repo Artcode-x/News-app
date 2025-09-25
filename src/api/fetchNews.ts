@@ -6,13 +6,12 @@ const API_KEY = "rJ7XaUF0IQZG7UYu0jp85Mdqpeu5MnbP";
 export async function fetchNews(): Promise<Record<string, NewsItemType[]>> {
   const now = new Date();
   const year = now.getFullYear();
-  const month = now.getMonth() + 1;
+  const month = Math.max(1, Math.min(12, now.getMonth() + 1));
 
-  // const url = `https://cors-anywhere.herokuapp.com/https://api.nytimes.com/svc/archive/v1/${year}/${month}.json?api-key=rJ7XaUF0IQZG7UYu0jp85Mdqpeu5MnbP`;
-  // const url = `/svc/archive/v1/${year}/${month}.json?api-key=rJ7XaUF0IQZG7UYu0jp85Mdqpeu5MnbP`;
-  // https://api.nytimes.com/svc/archive/v1/2024/june.json?api-key=rJ7XaUF0IQZG7UYu0jp85Mdqpeu5MnbP
+  // по каким то причинам апи не выводит посты за последний месяц, поэтому в url пишу хардкодом.
+
   const url = `https://corsproxy.io/?${encodeURIComponent(
-    `https://api.nytimes.com/svc/archive/v1/${year}/1.json?api-key=${API_KEY}`
+    `https://api.nytimes.com/svc/archive/v1/${year}/5.json?api-key=${API_KEY}`
   )}`;
   const res = await fetch(url, {
     headers: { "x-requested-with": "XMLHttpRequest" },
@@ -24,7 +23,7 @@ export async function fetchNews(): Promise<Record<string, NewsItemType[]>> {
     const thumb =
       doc.multimedia?.length > 0
         ? "https://www.nytimes.com/" + doc.multimedia[0].url
-        : "/assets/default-thumb.png";
+        : "/assets/image.svg";
 
     return {
       id: doc._id,
@@ -32,6 +31,7 @@ export async function fetchNews(): Promise<Record<string, NewsItemType[]>> {
       title: doc.abstract || "No title",
       date: formatDate(doc.pub_date),
       thumb,
+      url: doc.web_url,
     };
   });
 
@@ -42,6 +42,7 @@ export async function fetchNews(): Promise<Record<string, NewsItemType[]>> {
 
   // груп по дате
   const grouped: Record<string, NewsItemType[]> = {};
+
   articlesData.forEach((a) => {
     const day = new Date(a.date).toLocaleDateString("en-CA");
     if (!grouped[day]) grouped[day] = [];
