@@ -77,7 +77,7 @@ export async function fetchNews(): Promise<Record<string, NewsItemType[]>> {
       const thumb =
         doc.multimedia?.length > 0
           ? "https://www.nytimes.com/" + doc.multimedia[0].url
-          : "/assets/image.svg";
+          : "../assets/image.svg";
 
       return {
         id: doc._id,
