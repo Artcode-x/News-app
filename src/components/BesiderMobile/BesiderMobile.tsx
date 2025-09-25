@@ -2,8 +2,9 @@ import "./BesiderMobile.css";
 import Footer from "../Footer/Footer";
 import Loader from "../Loader/Loader";
 import Header from "../Header/Header";
+import Sidebar from "../Sidebar/Sidebar";
 import DateSection from "../News/DateSection";
-
+import { useState } from "react";
 
 const sampleData = [
   {
@@ -31,22 +32,30 @@ const sampleData = [
 ];
 
 function BesiderMobile() {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const clickToMenu = () => {
+    setSidebarOpen((prev) => !prev);
+  };
 
-return (
-<div className="page">
-<Header/>
+  const closeMenu = () => {
+    setSidebarOpen(false);
+  };
 
-<main className="content" role="main">
+  return (
+    <div className="page">
+      <Sidebar open={sidebarOpen} onClose={closeMenu} />
+      <Header clickToMenu={clickToMenu} />
 
-   {sampleData.map((section) => (
+      <main className="content" role="main">
+        {sampleData.map((section) => (
           <DateSection key={section.date} section={section} />
         ))}
-<Loader />
-<Footer />
-</main>
-</div>
-);
+        <Loader />
+        <Footer />
+      </main>
+    </div>
+  );
 }
 
-export default BesiderMobile
+export default BesiderMobile;
