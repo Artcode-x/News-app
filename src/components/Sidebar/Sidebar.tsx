@@ -1,11 +1,16 @@
+import { useDispatch, useSelector } from "react-redux";
 import "./Sidebar.css";
+import { openMenuSelector } from "../../store/selectors/selector";
+import { setSidebarOpen } from "../../store/reducers/reducers";
 
-type SidebarProps = {
-  open: boolean;
-  onClose: () => void;
-};
+function Sidebar() {
+  const open = useSelector(openMenuSelector);
+  const dispatch = useDispatch();
 
-function Sidebar({ open, onClose }: SidebarProps) {
+  const closeMenu = () => {
+    dispatch(setSidebarOpen(false));
+  };
+
   return (
     <div className={`sidebar-overlay ${open ? "sidebar-open" : ""}`}>
       <aside
@@ -15,7 +20,7 @@ function Sidebar({ open, onClose }: SidebarProps) {
         <button
           className="sidebar__close"
           aria-label="Close menu"
-          onClick={onClose}
+          onClick={closeMenu}
         >
           ×
         </button>

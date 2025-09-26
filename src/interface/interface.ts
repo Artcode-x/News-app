@@ -24,3 +24,7 @@ export interface Article {
   thumb?: string;
   url: string;
 }
+
+export interface SidebarProps {
+  onClose: () => void;
+}

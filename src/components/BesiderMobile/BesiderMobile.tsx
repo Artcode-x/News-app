@@ -7,18 +7,19 @@ import DateSection from "../News/DateSection";
 import { useEffect, useState } from "react";
 import { NewsItemType } from "../../interface/interface";
 import { fetchNews } from "../../api/fetchNews";
+import { useDispatch, useSelector } from "react-redux";
+import { setSidebarOpen } from "../../store/reducers/reducers";
+import { openMenuSelector } from "../../store/selectors/selector";
 
 function BesiderMobile() {
   const [articles, setArticles] = useState<Record<string, NewsItemType[]>>({});
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const sidebarOpen = useSelector(openMenuSelector);
+
+  const dispatch = useDispatch();
 
   const clickToMenu = () => {
-    setSidebarOpen((prev) => !prev);
-  };
-
-  const closeMenu = () => {
-    setSidebarOpen(false);
+    dispatch(setSidebarOpen(!sidebarOpen));
   };
 
   const loadNews = async () => {
@@ -44,7 +45,7 @@ function BesiderMobile() {
 
   return (
     <div className="page">
-      <Sidebar open={sidebarOpen} onClose={closeMenu} />
+      <Sidebar />
       <Header clickToMenu={clickToMenu} />
 
       <main className="content" role="main">
