@@ -1,15 +1,15 @@
-import "./BesiderMobile.css";
-import Footer from "../Footer/Footer";
-import Loader from "../Loader/Loader";
-import Header from "../Header/Header";
-import Sidebar from "../Sidebar/Sidebar";
-import DateSection from "../News/DateSection";
-import { NewsItemType } from "../../interface/interface";
-import { fetchNews } from "../../api/fetchNews";
-import { useDispatch, useSelector } from "react-redux";
-import { setSidebarOpen } from "../../store/reducers/reducers";
-import { openMenuSelector } from "../../store/selectors/selector";
-import { useEffect, useState, useRef } from "react";
+import './BesiderMobile.css';
+import Footer from '../Footer/Footer';
+import Loader from '../Loader/Loader';
+import Header from '../Header/Header';
+import Sidebar from '../Sidebar/Sidebar';
+import DateSection from '../News/DateSection';
+import { NewsItemType } from '../../interface/interface';
+import { fetchNews } from '../../api/fetchNews';
+import { useDispatch, useSelector } from 'react-redux';
+import { setSidebarOpen } from '../../store/reducers/reducers';
+import { openMenuSelector } from '../../store/selectors/selector';
+import { useEffect, useState, useRef } from 'react';
 
 function BesiderMobile() {
   const [articles, setArticles] = useState<Record<string, NewsItemType[]>>({});
@@ -26,18 +26,18 @@ function BesiderMobile() {
         setLoading(true);
         const newArticles = await fetchNews();
 
-        if ("error" in newArticles) {
-          console.error("Ошибка загрузки новостей:", newArticles.error);
+        if ('error' in newArticles) {
+          console.error('Ошибка загрузки новостей:', newArticles.error);
           return;
         }
 
-        Object.values(newArticles).forEach((items) => {
-          items.forEach((item) => seenArticleIds.current.add(item.id));
+        Object.values(newArticles).forEach(items => {
+          items.forEach(item => seenArticleIds.current.add(item.id));
         });
 
         setArticles(newArticles);
       } catch (error) {
-        console.error("Ошибка загрузки новостей:", error);
+        console.error('Ошибка загрузки новостей:', error);
       } finally {
         setLoading(false);
       }
@@ -52,8 +52,8 @@ function BesiderMobile() {
         const newArticles = await fetchNews();
         let foundNew = false;
 
-        setArticles((prev) => {
-          if ("error" in prev) {
+        setArticles(prev => {
+          if ('error' in prev) {
             return prev;
           }
 
@@ -75,10 +75,10 @@ function BesiderMobile() {
         });
 
         if (foundNew) {
-          console.log("🎉 Обнаружены новые новости!");
+          console.log('Доступны новые новости!');
         }
       } catch (error) {
-        console.error("Ошибка проверки новых новостей:", error);
+        console.error('Ошибка проверки новых новостей:', error);
       }
     };
 
@@ -87,11 +87,11 @@ function BesiderMobile() {
   }, []);
 
   return (
-    <div className="page">
+    <div className='page'>
       <Sidebar />
       <Header clickToMenu={clickToMenu} />
 
-      <main className="content" role="main">
+      <main className='content' role='main'>
         {loading ? (
           <Loader />
         ) : (
