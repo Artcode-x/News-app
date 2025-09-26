@@ -1,5 +1,5 @@
 ### Ссылка на Deploy проекта: 
-https://vocal-bublanina-210c41.netlify.app/
+https://gleeful-empanada-af690e.netlify.app/
 ## NewYork Times news
 
 ## Функционал приложения:
