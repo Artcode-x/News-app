@@ -14,23 +14,46 @@ import { openMenuSelector } from "../../store/selectors/selector";
 function BesiderMobile() {
   const [articles, setArticles] = useState<Record<string, NewsItemType[]>>({});
   const [loading, setLoading] = useState(true);
-  const sidebarOpen = useSelector(openMenuSelector);
+  const [seen, setSeen] = useState<Set<string>>(new Set());
 
+  const sidebarOpen = useSelector(openMenuSelector);
   const dispatch = useDispatch();
 
-  const clickToMenu = () => {
-    dispatch(setSidebarOpen(!sidebarOpen));
-  };
+  const clickToMenu = () => dispatch(setSidebarOpen(!sidebarOpen));
 
-  const loadNews = async () => {
+  const loadNews = async (checkNew = false) => {
     try {
-      setLoading(true);
-      const grouped = await fetchNews();
-      setArticles(grouped);
+      if (!checkNew) setLoading(true);
+
+      const newArticles = await fetchNews();
+
+      setArticles((prev) => {
+        const updated = { ...prev };
+        const newSeen = new Set(seen);
+
+        Object.entries(newArticles).forEach(([date, items]) => {
+          if (!updated[date]) updated[date] = [];
+
+          const itemsToAdd: NewsItemType[] = [];
+          for (const item of items) {
+            if (!checkNew || !newSeen.has(item.id)) {
+              itemsToAdd.push(item);
+              newSeen.add(item.id);
+            }
+          }
+
+          if (itemsToAdd.length) {
+            updated[date] = [...itemsToAdd, ...updated[date]];
+          }
+        });
+
+        setSeen(newSeen);
+        return updated;
+      });
     } catch (err) {
-      console.error("Ошибка загрузки новостей", err);
+      console.error("Ошибка загрузки:", err);
     } finally {
-      setLoading(false);
+      if (!checkNew) setLoading(false);
     }
   };
 
@@ -38,10 +61,10 @@ function BesiderMobile() {
     loadNews();
   }, []);
 
-  //   useEffect(() => {
-  //     const interval = setInterval(loadNews, 30000);
-  //     return () => clearInterval(interval);
-  //   }, []);
+  useEffect(() => {
+    const interval = setInterval(() => loadNews(true), 30000);
+    return () => clearInterval(interval);
+  }, [seen]);
 
   return (
     <div className="page">
@@ -49,14 +72,16 @@ function BesiderMobile() {
       <Header clickToMenu={clickToMenu} />
 
       <main className="content" role="main">
-        {!loading &&
+        {loading ? (
+          <Loader />
+        ) : (
           Object.entries(articles).map(([date, items]) => (
             <DateSection
               key={date}
               section={{ date: `News for ${date}`, items }}
             />
-          ))}
-        <Loader />
+          ))
+        )}
         <Footer />
       </main>
     </div>
