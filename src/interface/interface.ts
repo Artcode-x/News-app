@@ -5,6 +5,7 @@ export interface NewsItemType {
   date: string;
   thumb: string;
   url?: string;
+  originalDate?: Date;
 }
 
 export interface DateSectionType {
@@ -23,4 +24,8 @@ export interface Article {
   date: string;
   thumb?: string;
   url: string;
+}
+
+export interface SidebarProps {
+  onClose: () => void;
 }

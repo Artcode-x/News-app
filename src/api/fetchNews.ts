@@ -1,17 +1,17 @@
+import { groupArticlesByDate } from "../helpers/groupByDate";
 import formatDate from "../helpers/helpers";
 import { NewsItemType } from "../interface/interface";
 
 const API_KEY = "rJ7XaUF0IQZG7UYu0jp85Mdqpeu5MnbP";
 
-function getFallbackData(): Record<string, NewsItemType[]> {
+function getFallback(): Record<string, NewsItemType[]> {
   const today = new Date().toISOString().split("T")[0];
   return {
     [today]: [
       {
-        id: "fallback-1",
+        id: "fallback",
         source: "NY Times",
-        title:
-          "Latest news will appear here soon. API might be temporarily unavailable.",
+        title: "Новости временно недоступны. Попробуйте позже.",
         date: formatDate(new Date().toISOString()),
         thumb: "../assets/image.svg",
         url: "#",
@@ -21,88 +21,71 @@ function getFallbackData(): Record<string, NewsItemType[]> {
 }
 
 export async function fetchNews(): Promise<Record<string, NewsItemType[]>> {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = 5;
+  const baseUrl = `https://api.nytimes.com/svc/mostpopular/v2/viewed/1.json?api-key=${API_KEY}`;
 
   const proxyUrls = [
-    `https://corsproxy.io/?${encodeURIComponent(
-      `https://api.nytimes.com/svc/archive/v1/${year}/${month}.json?api-key=${API_KEY}`
-    )}`,
-    `https://api.allorigins.win/raw?url=${encodeURIComponent(
-      `https://api.nytimes.com/svc/archive/v1/${year}/${month}.json?api-key=${API_KEY}`
-    )}`,
-    `https://cors-anywhere.herokuapp.com/https://api.nytimes.com/svc/archive/v1/${year}/${month}.json?api-key=${API_KEY}`,
-    `https://thingproxy.freeboard.io/fetch/${encodeURIComponent(
-      `https://api.nytimes.com/svc/archive/v1/${year}/${month}.json?api-key=${API_KEY}`
-    )}`,
+    `https://corsproxy.io/?${encodeURIComponent(baseUrl)}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(baseUrl)}`,
+    `https://cors-anywhere.herokuapp.com/${baseUrl}`,
+    `https://thingproxy.freeboard.io/fetch/${encodeURIComponent(baseUrl)}`,
   ];
 
   let data: any = null;
-  let lastError: Error | null = null;
 
   for (const proxyUrl of proxyUrls) {
     try {
-      console.log(`Пробую proxy: ${proxyUrl.split("/")[2]}`);
-
-      const res = await fetch(proxyUrl, {
-        headers: { "x-requested-with": "XMLHttpRequest" },
-        signal: AbortSignal.timeout(10000),
-      });
+      console.log(`Попытка через ${proxyUrl.split("/")[2]}`);
+      const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(10000) });
 
       if (res.ok) {
         data = await res.json();
-        console.log(`Загружено успешно с: ${proxyUrl.split("/")[2]}`);
+        console.log(`Успешно: ${proxyUrl.split("/")[2]}`);
         break;
-      } else {
-        console.warn(`Неудачная попытка загрузки: ${res.status}`);
       }
-    } catch (error) {
-      lastError = error as Error;
-      console.warn(`Ошибка proxy : ${proxyUrl.split("/")[2]}`, error);
-      continue;
+    } catch (err) {
+      console.warn(`Ошибка на ${proxyUrl.split("/")[2]}`, err);
     }
   }
 
   if (!data) {
-    console.error(
-      "Не удалось загрузиться ни с одного proxy, использованы fallback данные",
-      lastError
-    );
-    return getFallbackData();
+    console.error("Не удалось загрузить новости ни с одного прокси");
+    return getFallback();
   }
 
   try {
-    const articlesData: NewsItemType[] = data.response.docs.map((doc: any) => {
+    let articles: NewsItemType[] = data.results.map((a: any, i: number) => {
       const thumb =
-        doc.multimedia?.length > 0
-          ? "https://www.nytimes.com/" + doc.multimedia[0].url
-          : "/assets/image.svg";
+        a.media?.[0]?.["media-metadata"]?.slice(-1)[0]?.url ||
+        "../assets/image.svg";
 
       return {
-        id: doc._id,
-        source: doc.source || "Unknown",
-        title: doc.abstract || "No title",
-        date: formatDate(doc.pub_date),
+        id: a.id || `article-${i}`,
+        source: a.source || "NY Times",
+        title: a.title || "Без заголовка",
+        date: formatDate(a.published_date || new Date().toISOString()),
         thumb,
-        url: doc.web_url,
+        url: a.url || "#",
       };
     });
 
-    articlesData.sort(
+    articles.sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
 
-    const grouped: Record<string, NewsItemType[]> = {};
-    articlesData.forEach((a) => {
-      const day = new Date(a.date).toLocaleDateString("en-CA");
-      if (!grouped[day]) grouped[day] = [];
-      grouped[day].push(a);
-    });
+    const unique: NewsItemType[] = [];
+    const seenIds = new Set<string>();
+    for (const art of articles) {
+      if (!seenIds.has(art.id)) {
+        seenIds.add(art.id);
+        unique.push(art);
+      } else {
+        console.warn("Отфильтрованные дубликаты статей:", art.id);
+      }
+    }
 
-    return grouped;
-  } catch (error) {
-    console.error("Ошибка получения данных с API:", error);
-    return getFallbackData();
+    return groupArticlesByDate(unique);
+  } catch (err) {
+    console.error("Ошибка обработки данных:", err);
+    return getFallback();
   }
 }
