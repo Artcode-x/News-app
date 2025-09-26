@@ -1,7 +1,16 @@
+@media (min-width: 600px) {
+  .page {
+    max-width: 420px;
+  }
+  .header__title {
+    font-size: 18px;
+  }
+}
+
 .page {
   box-sizing: border-box;
   font-family: 'Lato', sans-serif;
-  font-size: 14px; 
+  font-size: 14px;
   color: #111;
   background: #ffffff;
   max-width: 360px;
@@ -9,7 +18,17 @@
   min-height: 100vh;
 }
 
-@media (min-width: 600px) {
-  .page { max-width: 420px; }
-  .header__title { font-size: 18px }
+.error-message,
+.no-news {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
+}
+
+.error-message {
+  color: #d32f2f;
+  background: #ffebee;
+  border-radius: 8px;
+  margin: 20px;
 }
