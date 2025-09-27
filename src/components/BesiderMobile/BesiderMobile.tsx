@@ -13,7 +13,7 @@ import { useEffect, useState, useRef } from 'react';
 
 function BesiderMobile() {
   const [articles, setArticles] = useState<Record<string, NewsItemType[]>>({});
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const sidebarOpen = useSelector(openMenuSelector);
   const seenArticleIds = useRef<Set<string>>(new Set());
   const dispatch = useDispatch();
@@ -22,25 +22,16 @@ function BesiderMobile() {
 
   useEffect(() => {
     const loadInitialNews = async () => {
-      try {
-        setLoading(true);
-        const newArticles = await fetchNews();
+      setLoading(true);
+      const newArticles = await fetchNews();
+      console.log(newArticles);
 
-        if ('error' in newArticles) {
-          console.error('Ошибка загрузки новостей:', newArticles.error);
-          return;
-        }
+      Object.values(newArticles).forEach(items => {
+        items.forEach(item => seenArticleIds.current.add(item.id));
+      });
 
-        Object.values(newArticles).forEach(items => {
-          items.forEach(item => seenArticleIds.current.add(item.id));
-        });
-
-        setArticles(newArticles);
-      } catch (error) {
-        console.error('Ошибка загрузки новостей:', error);
-      } finally {
-        setLoading(false);
-      }
+      setArticles(newArticles);
+      setLoading(false);
     };
 
     loadInitialNews();
@@ -48,40 +39,31 @@ function BesiderMobile() {
 
   useEffect(() => {
     const checkForNewNews = async () => {
-      try {
-        const newArticles = await fetchNews();
-        let foundNew = false;
+      const newArticles = await fetchNews();
+      let foundNew = false;
 
-        setArticles(prev => {
-          if ('error' in prev) {
-            return prev;
-          }
+      setArticles(prev => {
+        const updated: Record<string, NewsItemType[]> = { ...prev };
 
-          const updated: Record<string, NewsItemType[]> = { ...prev };
+        Object.entries(newArticles).forEach(([date, items]) => {
+          if (!updated[date]) updated[date] = [];
 
-          Object.entries(newArticles).forEach(([date, items]) => {
-            if (!updated[date]) updated[date] = [];
-
-            items.forEach((item: NewsItemType) => {
-              if (!seenArticleIds.current.has(item.id)) {
-                seenArticleIds.current.add(item.id);
-                updated[date].unshift(item);
-                foundNew = true;
-              }
-            });
+          items.forEach(item => {
+            if (!seenArticleIds.current.has(item.id)) {
+              seenArticleIds.current.add(item.id);
+              updated[date].unshift(item);
+              foundNew = true;
+            }
           });
-
-          return updated;
         });
 
-        if (foundNew) {
-          console.log('Доступны новые новости!');
-        }
-      } catch (error) {
-        console.error('Ошибка проверки новых новостей:', error);
+        return updated;
+      });
+
+      if (foundNew) {
+        console.log('Новые новости добавлены');
       }
     };
-
     const interval = setInterval(checkForNewNews, 30000);
     return () => clearInterval(interval);
   }, []);
@@ -95,16 +77,13 @@ function BesiderMobile() {
         {loading ? (
           <Loader />
         ) : (
-          Object.entries(articles).map(
-            ([date, items]: [string, NewsItemType[]]) => (
-              <DateSection
-                key={date}
-                section={{ date: `News for ${date}`, items }}
-              />
-            )
-          )
+          Object.entries(articles).map(([date, items]) => (
+            <DateSection
+              key={date}
+              section={{ date: `News for ${date}`, items }}
+            />
+          ))
         )}
-
         <Footer />
       </main>
     </div>
