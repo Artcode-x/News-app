@@ -1,6 +1,6 @@
-const mainSelector = (store: { store: any }) => store.store;
+import { AppState } from '../../interface/interface';
 
-export default mainSelector;
+export const openMenuSelector = (store: { store: AppState }) =>
+  store.store.sidebarOpen;
 
-export const openMenuSelector = (store: { store: any }) =>
-  mainSelector(store).sidebarOpen;
+export const errorSelector = (store: { store: AppState }) => store.store.error;

@@ -72,3 +72,11 @@
   text-decoration: none;
   color: inherit;
 }
+
+.news__item--error {
+  border: 1px solid #ff4d4f;
+  background: #fff2f0;
+  padding: 16px;
+  border-radius: 8px;
+  color: #a8071a;
+}
