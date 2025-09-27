@@ -81,7 +81,7 @@ function BesiderMobile() {
       }
     };
 
-    const interval = setInterval(checkForNewNews, 930000);
+    const interval = setInterval(checkForNewNews, 30000);
     return () => clearInterval(interval);
   }, []);
 
