@@ -64,7 +64,7 @@ function BesiderMobile() {
         console.log('Новые новости добавлены');
       }
     };
-    const interval = setInterval(checkForNewNews, 530000);
+    const interval = setInterval(checkForNewNews, 30000);
     return () => clearInterval(interval);
   }, []);
 
