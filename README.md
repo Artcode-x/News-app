@@ -1,5 +1,5 @@
 ### Ссылка на Deploy проекта: 
-https://gleeful-empanada-af690e.netlify.app/
+https://voluble-basbousa-0606dc.netlify.app/
 ## NewYork Times news
 
 ## Функционал приложения:
