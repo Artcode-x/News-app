@@ -6,6 +6,7 @@ export interface NewsItemType {
   thumb: string;
   url?: string;
   originalDate?: Date;
+  error?: string;
 }
 
 export interface DateSectionType {
@@ -30,10 +31,6 @@ export interface SidebarProps {
   onClose: () => void;
 }
 
-export interface AppState {
-  sidebarOpen: boolean;
-}
-
 export interface NYTimesArticle {
   id: string;
   source: string;
@@ -41,7 +38,7 @@ export interface NYTimesArticle {
   published_date: string;
   url: string;
   media?: Array<{
-    "media-metadata": Array<{
+    'media-metadata': Array<{
       url: string;
       format: string;
     }>;
@@ -60,6 +57,11 @@ export interface HeaderProps {
 }
 
 export interface LoaderProps {
-  size?: "small" | "medium" | "large";
+  size?: 'small' | 'medium' | 'large';
   color?: string;
+}
+
+export interface AppState {
+  sidebarOpen: boolean;
+  error: string | null;
 }

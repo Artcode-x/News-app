@@ -1,36 +1,52 @@
-import './BesiderMobile.css';
+import { useEffect, useState, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import Sidebar from '../Sidebar/Sidebar';
+import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import Loader from '../Loader/Loader';
-import Header from '../Header/Header';
-import Sidebar from '../Sidebar/Sidebar';
 import DateSection from '../News/DateSection';
-import { NewsItemType } from '../../interface/interface';
 import { fetchNews } from '../../api/fetchNews';
-import { useDispatch, useSelector } from 'react-redux';
-import { setSidebarOpen } from '../../store/reducers/reducers';
-import { openMenuSelector } from '../../store/selectors/selector';
-import { useEffect, useState, useRef } from 'react';
+import { NewsItemType } from '../../interface/interface';
+import {
+  clearError,
+  setError,
+  setSidebarOpen,
+} from '../../store/reducers/reducers';
+import {
+  errorSelector,
+  openMenuSelector,
+} from '../../store/selectors/selector';
+import './BesiderMobile.css';
 
 function BesiderMobile() {
   const [articles, setArticles] = useState<Record<string, NewsItemType[]>>({});
   const [loading, setLoading] = useState<boolean>(true);
-  const sidebarOpen = useSelector(openMenuSelector);
   const seenArticleIds = useRef<Set<string>>(new Set());
+
   const dispatch = useDispatch();
+
+  const sidebarOpen = useSelector(openMenuSelector);
+  const msgError = useSelector(errorSelector);
 
   const clickToMenu = () => dispatch(setSidebarOpen(!sidebarOpen));
 
   useEffect(() => {
     const loadInitialNews = async () => {
       setLoading(true);
-      const newArticles = await fetchNews();
-      console.log(newArticles);
+      const { grouped, error } = await fetchNews();
 
-      Object.values(newArticles).forEach(items => {
+      if (error) {
+        console.log(`!test ${error}`);
+        dispatch(setError(error));
+      } else {
+        dispatch(clearError(null));
+      }
+
+      Object.values(grouped).forEach(items => {
         items.forEach(item => seenArticleIds.current.add(item.id));
       });
 
-      setArticles(newArticles);
+      setArticles(grouped);
       setLoading(false);
     };
 
@@ -39,13 +55,13 @@ function BesiderMobile() {
 
   useEffect(() => {
     const checkForNewNews = async () => {
-      const newArticles = await fetchNews();
+      const { grouped } = await fetchNews();
       let foundNew = false;
 
       setArticles(prev => {
         const updated: Record<string, NewsItemType[]> = { ...prev };
 
-        Object.entries(newArticles).forEach(([date, items]) => {
+        Object.entries(grouped).forEach(([date, items]) => {
           if (!updated[date]) updated[date] = [];
 
           items.forEach(item => {
@@ -64,7 +80,8 @@ function BesiderMobile() {
         console.log('Новые новости добавлены');
       }
     };
-    const interval = setInterval(checkForNewNews, 30000);
+
+    const interval = setInterval(checkForNewNews, 930000);
     return () => clearInterval(interval);
   }, []);
 
@@ -76,6 +93,12 @@ function BesiderMobile() {
       <main className='content' role='main'>
         {loading ? (
           <Loader />
+        ) : msgError ? (
+          <div className='error-message'>
+            <div>⚠️</div>
+            Ошибка загрузки новостей:{' '}
+            <div className='error-message-reason'>{msgError}</div>
+          </div>
         ) : (
           Object.entries(articles).map(([date, items]) => (
             <DateSection

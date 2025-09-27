@@ -1,18 +1,26 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AppState } from '../../interface/interface';
 
-const initialState = {
+const initialState: AppState = {
   sidebarOpen: false,
+  error: null,
 };
 
 const reducers = createSlice({
-  name: "reducers",
+  name: 'reducers',
   initialState,
   reducers: {
-    setSidebarOpen: (state, action) => {
+    setSidebarOpen: (state, action: PayloadAction<boolean>) => {
       state.sidebarOpen = action.payload;
+    },
+    setError: (state, action: PayloadAction<string | null>) => {
+      state.error = action.payload;
+    },
+    clearError: (state, action) => {
+      state.error = null;
     },
   },
 });
 
-export const { setSidebarOpen } = reducers.actions;
+export const { setSidebarOpen, setError, clearError } = reducers.actions;
 export default reducers;
