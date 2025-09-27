@@ -25,8 +25,6 @@ function NewsItem({ item }: NewsItemProps) {
       <img
         src={item.thumb}
         className='news__thumb'
-        // width={72}
-        // height={72}
         alt={hasError ? 'Ошибка загрузки изображения' : item.thumb}
       />
       <div className='news__body'>
