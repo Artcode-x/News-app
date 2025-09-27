@@ -24,11 +24,11 @@ export async function fetchNews(): Promise<{
   ];
 
   let data: NYTimesResponse | null = null;
-  let lastError: string | undefined;
+  const errors: string[] = [];
 
   for (const proxyUrl of proxyUrls) {
     try {
-      console.log(`🔄 Попытка через ${proxyUrl.split('/')[2]}`);
+      console.log(`Попытка через ${proxyUrl.split('/')[2]}`);
 
       const res = await axios.get<NYTimesResponse>(proxyUrl, {
         timeout: 10000,
@@ -36,21 +36,49 @@ export async function fetchNews(): Promise<{
 
       if (res.status === 200 && res.data?.results) {
         data = res.data;
-        console.log(`✅ Успешно: ${proxyUrl.split('/')[2]}`);
+        console.log(`Успешно: ${proxyUrl.split('/')[2]}`);
         break;
       }
     } catch (err: any) {
-      lastError = err?.message || 'Неизвестная ошибка';
-      console.log(lastError);
-      console.warn(`❌ Ошибка на ${proxyUrl.split('/')[2]}:`, lastError);
+      let errorMessage = '';
+
+      if (err.response?.status === 429) {
+        errorMessage = '429: Превышен лимит запросов';
+      } else if (err.response?.status === 403) {
+        errorMessage = '403: Доступ запрещен';
+      } else {
+        errorMessage = err?.message || 'Неизвестная ошибка';
+      }
+
+      errors.push(`${proxyUrl.split('/')[2]}: ${errorMessage}`);
+      console.warn(`Ошибка на ${proxyUrl.split('/')[2]}:`, errorMessage);
     }
   }
 
   if (!data || !Array.isArray(data.results)) {
     console.error('Не удалось загрузиться ни с одного proxy');
+
+    let errorMessage = 'Не удалось загрузить новости';
+
+    if (errors.length > 0) {
+      const has429 = errors.some(err => err.includes('429'));
+      const has403 = errors.some(err => err.includes('403'));
+
+      if (has429 && has403) {
+        errorMessage =
+          'Все сервисы недоступны: превышены лимиты запросов (429) и доступ запрещен (403)';
+      } else if (has429) {
+        errorMessage = 'Превышены лимиты запросов (429) на всех сервисах';
+      } else if (has403) {
+        errorMessage = 'Доступ запрещен (403) на всех сервисах';
+      } else {
+        errorMessage = `Ошибки: ${errors.join('; ')}`;
+      }
+    }
+
     return {
       grouped: getFallback(),
-      error: lastError || 'Ошибка загрузки данных',
+      error: errorMessage,
     };
   }
 
