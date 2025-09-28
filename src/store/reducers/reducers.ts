@@ -23,4 +23,4 @@ const reducers = createSlice({
 });
 
 export const { setSidebarOpen, setError, clearError } = reducers.actions;
-export default reducers;
+export default reducers.reducer;

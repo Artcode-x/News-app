@@ -2,77 +2,26 @@
   display: flex;
   gap: 12px;
   align-items: flex-start;
-  padding: 8px 0;
   cursor: pointer;
   transition: all 0.3s ease;
   border-radius: 8px;
   padding: 12px;
   margin: 0 -12px;
 }
-
 .news__item:hover {
   transform: scale(1.02);
   background-color: #f8f9fa;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
-
-.news__thumb {
-  width: 72px;
-  height: 72px;
-  object-fit: cover;
-  flex-shrink: 0;
-  border-radius: 4px;
-  transition: transform 0.3s ease;
-}
-
 .news__item:hover .news__thumb {
   transform: scale(1.05);
 }
-
-.news__body {
-  flex: 1;
-}
-
-.news__meta {
-  margin-bottom: 4px;
-}
-
-.news__source {
-  color: #0070f3;
-  font-weight: 800;
-  font-size: 14px;
-  line-height: 100%;
-  transition: color 0.3s ease;
-}
-
 .news__item:hover .news__source {
   color: #0056b3;
 }
-
-.news__title {
-  margin: 2px 0 6px 0;
-  font-size: 16px;
-  line-height: 22px;
-  font-weight: 400;
-  transition: color 0.3s ease;
-}
-
 .news__item:hover .news__title {
   color: #0070f3;
 }
-
-.news__date {
-  display: block;
-  font-size: 14px;
-  color: #7b7b7b;
-  font-weight: 400;
-}
-
-.news__item-link {
-  text-decoration: none;
-  color: inherit;
-}
-
 .news__item--error {
   border: 1px solid #ff4d4f;
   background: #fff2f0;
@@ -80,3 +29,42 @@
   border-radius: 8px;
   color: #a8071a;
 }
+.news__item .news__thumb {
+  width: 72px;
+  height: 72px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  flex-shrink: 0;
+  border-radius: 4px;
+  transition: transform 0.3s ease;
+}
+.news__item .news__body {
+  flex: 1;
+}
+.news__item .news__body .news__meta {
+  margin-bottom: 4px;
+}
+.news__item .news__body .news__source {
+  color: #0070f3;
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 100%;
+  transition: color 0.3s ease;
+}
+.news__item .news__body .news__title {
+  margin: 2px 0 6px 0;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 400;
+  transition: color 0.3s ease;
+}
+.news__item .news__body .news__date {
+  display: block;
+  font-size: 14px;
+  color: #7b7b7b;
+  font-weight: 400;
+}
+.news__item .news__item-link {
+  text-decoration: none;
+  color: inherit;
+}/*# sourceMappingURL=Newsitem.css.map */

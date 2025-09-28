@@ -28,7 +28,8 @@
   padding-top: 4px;
   width: 80px;
   height: auto;
-  object-fit: contain;
+  -o-object-fit: contain;
+     object-fit: contain;
   vertical-align: middle;
   margin-bottom: 10px;
-}
+}/*# sourceMappingURL=Footer.css.map */

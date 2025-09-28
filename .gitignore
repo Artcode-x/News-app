@@ -4,6 +4,9 @@
 # production
 /build
 
+# # generated files
+# *.css.map
+
 # misc
 .DS_Store
 .env.local
