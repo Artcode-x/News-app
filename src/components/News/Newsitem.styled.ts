@@ -73,11 +73,11 @@ export const Date = styled.time`
   font-weight: 400;
 `;
 
+// попытка сделать покрасивше :)
 export const Divider = styled.div`
   height: 1px;
   background-color: #efefef;
   margin: 12px 0;
-  display: none;
 `;
 
 export const Section = styled.section`
