@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { NewsItemProps } from '../../interface/interface';
 import { errorSelector } from '../../store/selectors/selector';
-import './Newsitem.css';
+import * as S from './Newsitem.styled';
 
 function NewsItem({ item }: NewsItemProps) {
   const msgError = useSelector(errorSelector) as string | null;
@@ -16,29 +16,25 @@ function NewsItem({ item }: NewsItemProps) {
   };
 
   return (
-    <article
-      className={`news__item ${hasError ? 'news__item--error' : ''}`}
-      aria-label={hasError ? `Ошибка: ${msgError}` : item.title}
+    <S.NewsItem
+      $error={hasError}
       onClick={handleClick}
-      style={{ cursor: hasError ? 'not-allowed' : 'pointer' }}
+      aria-label={hasError ? `Ошибка: ${msgError}` : item.title}
     >
-      <img
+      <S.Thumb
         src={item.thumb}
-        className='news__thumb'
         alt={hasError ? 'Ошибка загрузки изображения' : item.thumb}
       />
-      <div className='news__body'>
-        <div className='news__meta'>
-          <span className='news__source'>
-            {hasError ? 'Ошибка' : item.source}
-          </span>
-        </div>
-        <h3 className='news__title'>{hasError ? msgError : item.title}</h3>
-        <time className='news__date'>
+      <S.Body>
+        <S.Meta>
+          <S.Source>{hasError ? 'Ошибка' : item.source}</S.Source>
+        </S.Meta>
+        <S.Title>{hasError ? msgError : item.title}</S.Title>
+        <S.Date>
           {hasError ? 'Попробуйте перезагрузить страницу' : item.date}
-        </time>
-      </div>
-    </article>
+        </S.Date>
+      </S.Body>
+    </S.NewsItem>
   );
 }
 
