@@ -1,5 +1,6 @@
 ### Ссылка на Deploy проекта: 
 https://voluble-basbousa-0606dc.netlify.app/
+Для запуска желательно перейти по ссылке и нажать request: https://cors-anywhere.herokuapp.com/corsdemo
 ## NewYork Times news
 
 ## Функционал приложения:
