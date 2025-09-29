@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
-import './Sidebar.css';
 import { openMenuSelector } from '../../store/selectors/selector';
 import { setSidebarOpen } from '../../store/reducers/reducers';
+import * as S from './Sidebar.styled';
 
 function Sidebar() {
   const open: boolean = useSelector(openMenuSelector);
@@ -20,23 +20,16 @@ function Sidebar() {
   ];
 
   return (
-    <div className={`sidebar-overlay ${open ? 'sidebar-open' : ''}`}>
-      <aside
-        className={`sidebar ${open ? 'sidebar--open' : ''}`}
-        tabIndex={open ? 0 : -1}
-      >
-        <button className='sidebar__close' onClick={closeMenu}>
-          ×
-        </button>
-        <ul className='sidebar__list'>
+    <S.Overlay $open={open}>
+      <S.Aside tabIndex={open ? 0 : -1}>
+        <S.CloseButton onClick={closeMenu}>×</S.CloseButton>
+        <S.List>
           {categories.map(category => (
-            <li key={category} className='sidebar__item'>
-              {category}
-            </li>
+            <S.Item key={category}>{category}</S.Item>
           ))}
-        </ul>
-      </aside>
-    </div>
+        </S.List>
+      </S.Aside>
+    </S.Overlay>
   );
 }
 

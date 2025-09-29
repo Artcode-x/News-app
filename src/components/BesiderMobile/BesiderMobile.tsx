@@ -16,7 +16,7 @@ import {
   errorSelector,
   openMenuSelector,
 } from '../../store/selectors/selector';
-import './BesiderMobile.css';
+import * as S from './BesiderMobile.styled';
 
 function BesiderMobile() {
   const [articles, setArticles] = useState<Record<string, NewsItemType[]>>({});
@@ -86,19 +86,19 @@ function BesiderMobile() {
   }, []);
 
   return (
-    <div className='page'>
+    <S.Page>
       <Sidebar />
       <Header clickToMenu={clickToMenu} />
 
-      <main className='content' role='main'>
+      <S.Content role='main'>
         {loading ? (
           <Loader />
         ) : msgError ? (
-          <div className='error-message'>
+          <S.ErrorMessage>
             <div>⚠️</div>
             Ошибка загрузки новостей:{' '}
-            <div className='error-message-reason'>{msgError}</div>
-          </div>
+            <S.ErrorMessageReason>{msgError}</S.ErrorMessageReason>
+          </S.ErrorMessage>
         ) : (
           Object.entries(articles).map(([date, items]) => (
             <DateSection
@@ -108,8 +108,8 @@ function BesiderMobile() {
           ))
         )}
         <Footer />
-      </main>
-    </div>
+      </S.Content>
+    </S.Page>
   );
 }
 
